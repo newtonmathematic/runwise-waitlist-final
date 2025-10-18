@@ -7,9 +7,9 @@ import { Analytics } from "@vercel/analytics/react";
 const FigtreeFont = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Next.js + Notion — Waitlist Template",
+  title: "Join the Waitlist",
   description:
-    "A simple Next.js waitlist template with Notion as CMS and Resend to send emails created with React Email and Upstash Redis for rate limiting. Deployed on Vercel.",
+    "Join the Runwise waitlist to get early access and perks for AI-powered automation made effortless.",
 };
 
 export default function RootLayout({
@@ -19,6 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <link rel="icon" href="/logo.png" type="image/png" />
       <meta property="og:image" content="/opengraph-image.png" />
       <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="1280" />
