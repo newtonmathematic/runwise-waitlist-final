@@ -108,7 +108,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center overflow-x-clip pt-8 md:pt-16">
+    <main className="flex min-h-screen flex-col items-center justify-center overflow-x-clip">
       <section className="flex flex-col items-center px-4 sm:px-6 lg:px-8">
         <Header />
 

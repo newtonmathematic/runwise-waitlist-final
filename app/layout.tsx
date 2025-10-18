@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "Runwise",
     images: [
       {
-        url: "/logo.png",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Runwise - AI-powered automation made effortless",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Join the Runwise Waitlist",
     description: "AI-powered automation made effortless. Get early access and exclusive perks.",
-    images: ["/logo.png"],
+    images: ["/opengraph-image.png"],
   },
 };
 
