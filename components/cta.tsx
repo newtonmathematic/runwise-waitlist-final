@@ -21,23 +21,32 @@ export default function CTA() {
       </motion.div>
 
       <motion.img
-        src="/logo.svg"
-        alt="logo"
-        className="mx-auto h-24 w-24"
+        src="/logo.png"
+        alt="Runwise logo"
+        className="mx-auto h-12 w-12 my-4"
         variants={itemVariants}
       />
 
       <motion.div variants={itemVariants}>
-        <TextBlur
-          className="text-center text-3xl font-medium tracking-tighter sm:text-5xl"
-          text="A Simple Next.js Waitlist Template with Notion as CMS"
-        />
+        <div className="text-center text-3xl font-medium tracking-tighter sm:text-5xl">
+          <TextBlur
+            className="inline"
+            text="AI-powered automation made "
+          />
+          <span className="bg-gradient-to-r from-pink-400 via-purple-500 to-purple-600 bg-clip-text text-transparent font-semibold">
+            effortless
+          </span>
+          <TextBlur
+            className="inline"
+            text="."
+          />
+        </div>
       </motion.div>
 
       <motion.div variants={itemVariants}>
         <TextBlur
           className="mx-auto max-w-[27rem] pt-1.5 text-center text-base text-zinc-300 sm:text-lg"
-          text="Join the waitlist to get early access of the product and recieve updates on the progress!"
+          text="Join the Runwise waitlist to get early access and perks"
           duration={0.8}
         />
       </motion.div>
