@@ -8,8 +8,29 @@ const FigtreeFont = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Join the Waitlist",
-  description:
-    "Join the Runwise waitlist to get early access and perks for AI-powered automation made effortless.",
+  description: "Join the Runwise waitlist to get early access and perks for AI-powered automation made effortless.",
+  openGraph: {
+    title: "Join the Runwise Waitlist",
+    description: "AI-powered automation made effortless. Get early access and exclusive perks.",
+    url: "https://runwiseai.app",
+    siteName: "Runwise",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Runwise - AI-powered automation made effortless",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Join the Runwise Waitlist",
+    description: "AI-powered automation made effortless. Get early access and exclusive perks.",
+    images: ["/logo.png"],
+  },
 };
 
 export default function RootLayout({
@@ -20,22 +41,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <link rel="icon" href="/logo.png" type="image/png" />
-      <meta property="og:image" content="/opengraph-image.png" />
-      <meta property="og:image:type" content="image/png" />
-      <meta property="og:image:width" content="1280" />
-      <meta property="og:image:height" content="832" />
-      <meta
-        property="og:site_name"
-        content="Next.js + Notion — Waitlist Template"
-      />
-      <meta
-        property="og:url"
-        content="https://nextjs-notion-waitlist.vercel.app/"
-      />
-      <meta name="twitter:image" content="/twitter-image.png" />
-      <meta name="twitter:image:type" content="image/png" />
-      <meta name="twitter:image:width" content="1280" />
-      <meta name="twitter:image:height" content="832" />
       <body className={FigtreeFont.className}>
         {children}
         <Toaster richColors position="top-center" />
