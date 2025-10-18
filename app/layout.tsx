@@ -14,14 +14,6 @@ export const metadata: Metadata = {
     description: "AI-powered automation made effortless. Get early access and exclusive perks.",
     url: "https://runwiseai.app",
     siteName: "Runwise",
-    images: [
-      {
-        url: "/opengraph-image.png?v=2",
-        width: 1200,
-        height: 630,
-        alt: "Runwise - AI-powered automation made effortless",
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -29,7 +21,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Join the Runwise Waitlist",
     description: "AI-powered automation made effortless. Get early access and exclusive perks.",
-    images: ["/opengraph-image.png?v=2"],
   },
 };
 
@@ -41,11 +32,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <link rel="icon" href="/logo.png" type="image/png" />
-      <meta property="og:image" content="/opengraph-image.png?v=2" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content="Runwise - AI-powered automation made effortless" />
-      <meta name="twitter:image" content="/opengraph-image.png?v=2" />
       <body className={FigtreeFont.className}>
         {children}
         <Toaster richColors position="top-center" />
