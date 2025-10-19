@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
 
   const sendBulkEmails = async () => {
     setLoading(true);

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenEmails));
         }
       } catch (error) {
-        results.push({ email: user.email, success: false, error: error.message });
+        results.push({ email: user.email, success: false, error: error instanceof Error ? error.message : String(error) });
         
         // Still add delay even on error
         if (i < users.length - 1) {
