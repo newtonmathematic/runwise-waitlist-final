@@ -42,12 +42,12 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
 ### Step 3: Test Your Setup
 
 1. **Test Individual Email**:
-   - Go to your waitlist form at `http://localhost:3001`
+   - Go to your waitlist form at `http://localhost:3000`
    - Submit a test email
    - Check if you receive the Runwise welcome email
 
 2. **Test Bulk Email**:
-   - Visit `http://localhost:3001/admin`
+   - Visit `http://localhost:3000/admin`
    - Click "Send Bulk Emails"
    - Check the results
 
@@ -61,7 +61,7 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
 2. Click "Send Bulk Emails"
 3. The system will:
    - Fetch all users from your Notion database
-   - Send emails in batches of 50
+   - Send emails sequentially with rate limiting
    - Show you the results (successful/failed)
 
 ## 📊 Free Tier Limits
@@ -74,7 +74,7 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
 
 - The admin page is currently unprotected - consider adding authentication
 - Rate limiting is already implemented
-- Emails are sent in batches to respect limits
+- Emails are sent sequentially to respect limits
 
 ## 🐛 Troubleshooting
 
@@ -91,7 +91,7 @@ UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token_here
 
 ## 🎯 Next Steps
 
-1. **Create the `.env.local` file** with the credentials above
+1. **Create the `.env.local` file** with your actual credentials
 2. **Set up your domain** in Resend
 3. **Test with a few emails** first
 4. **Deploy to production** and test bulk emails
