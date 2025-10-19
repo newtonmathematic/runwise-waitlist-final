@@ -18,11 +18,12 @@ function MousePosition(): MousePosition {
       setMousePosition({ x: event.clientX, y: event.clientY });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("mousemove", handleMouseMove);
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+      };
+    }
   }, []);
 
   return mousePosition;
@@ -51,6 +52,19 @@ function hexToRgb(hex: string): number[] {
   return [red, green, blue];
 }
 
+type Circle = {
+  x: number;
+  y: number;
+  translateX: number;
+  translateY: number;
+  size: number;
+  alpha: number;
+  targetAlpha: number;
+  dx: number;
+  dy: number;
+  magnetism: number;
+};
+
 const Particles: React.FC<ParticlesProps> = ({
   className = "",
   quantityDesktop = 100,
@@ -67,27 +81,45 @@ const Particles: React.FC<ParticlesProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const context = useRef<CanvasRenderingContext2D | null>(null);
-  const circles = useRef<any[]>([]);
+  const circles = useRef<Circle[]>([]);
   const mousePosition = MousePosition();
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
+  const animationFrameRef = useRef<number>();
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
   const [quantity, setQuantity] = useState(quantityDesktop);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Initialize component
+  useEffect(() => {
+    setIsMounted(true);
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
 
   const initCanvas = useCallback(() => {
-    resizeCanvas();
-    drawParticles();
-  }, [quantity, color]);
+    if (!isMounted || !canvasRef.current) return;
+    
+    try {
+      resizeCanvas();
+      drawParticles();
+    } catch (error) {
+      console.warn("Particles initialization error:", error);
+    }
+  }, [quantity, color, isMounted]);
 
+  // Handle resize and quantity changes
   useEffect(() => {
+    if (!isMounted) return;
+
     const handleResize = () => {
       if (window.innerWidth < mobileBreakpoint) {
         setQuantity(quantityMobile);
       } else {
         setQuantity(quantityDesktop);
       }
-      initCanvas();
     };
 
     handleResize();
@@ -96,31 +128,42 @@ const Particles: React.FC<ParticlesProps> = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [quantityDesktop, quantityMobile, mobileBreakpoint, initCanvas]);
+  }, [quantityDesktop, quantityMobile, mobileBreakpoint, isMounted]);
 
+  // Initialize canvas and context
   useEffect(() => {
+    if (!isMounted) return;
+
     if (canvasRef.current) {
       context.current = canvasRef.current.getContext("2d");
     }
+    
     initCanvas();
     animate();
-    window.addEventListener("resize", initCanvas);
 
     return () => {
-      window.removeEventListener("resize", initCanvas);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
-  }, [color, initCanvas]);
+  }, [color, initCanvas, isMounted]);
 
+  // Handle mouse movement
   useEffect(() => {
+    if (!isMounted) return;
     onMouseMove();
-  }, [mousePosition.x, mousePosition.y]);
+  }, [mousePosition.x, mousePosition.y, isMounted]);
 
+  // Handle refresh
   useEffect(() => {
+    if (!isMounted) return;
     initCanvas();
-  }, [refresh, initCanvas]);
+  }, [refresh, initCanvas, isMounted]);
 
-  const onMouseMove = () => {
-    if (canvasRef.current) {
+  const onMouseMove = useCallback(() => {
+    if (!canvasRef.current || !isMounted) return;
+    
+    try {
       const rect = canvasRef.current.getBoundingClientRect();
       const { w, h } = canvasSize.current;
       const x = mousePosition.x - rect.left - w / 2;
@@ -130,24 +173,15 @@ const Particles: React.FC<ParticlesProps> = ({
         mouse.current.x = x;
         mouse.current.y = y;
       }
+    } catch (error) {
+      console.warn("Mouse move error:", error);
     }
-  };
+  }, [mousePosition.x, mousePosition.y, isMounted]);
 
-  type Circle = {
-    x: number;
-    y: number;
-    translateX: number;
-    translateY: number;
-    size: number;
-    alpha: number;
-    targetAlpha: number;
-    dx: number;
-    dy: number;
-    magnetism: number;
-  };
+  const resizeCanvas = useCallback(() => {
+    if (!canvasRef.current || !context.current || !isMounted) return;
 
-  const resizeCanvas = () => {
-    if (canvasRef.current && context.current) {
+    try {
       circles.current.length = 0;
       canvasSize.current.w = window.innerWidth;
       canvasSize.current.h = window.innerHeight;
@@ -156,10 +190,12 @@ const Particles: React.FC<ParticlesProps> = ({
       canvasRef.current.style.width = `100vw`;
       canvasRef.current.style.height = `100vh`;
       context.current.scale(dpr, dpr);
+    } catch (error) {
+      console.warn("Canvas resize error:", error);
     }
-  };
+  }, [dpr, isMounted]);
 
-  const circleParams = (): Circle => {
+  const circleParams = useCallback((): Circle => {
     const x = Math.floor(Math.random() * canvasSize.current.w);
     const y = Math.floor(Math.random() * canvasSize.current.h);
     const translateX = 0;
@@ -182,47 +218,62 @@ const Particles: React.FC<ParticlesProps> = ({
       dy,
       magnetism,
     };
-  };
+  }, [size]);
 
   const rgb = hexToRgb(color);
 
-  const drawCircle = (circle: Circle, update = false) => {
-    if (context.current) {
+  const drawCircle = useCallback((circle: Circle, update = false) => {
+    if (!context.current || !isMounted) return;
+
+    try {
       const { x, y, translateX, translateY, size, alpha } = circle;
+      context.current.save();
       context.current.translate(translateX, translateY);
       context.current.beginPath();
       context.current.arc(x, y, size, 0, 2 * Math.PI);
       context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
       context.current.fill();
-      context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
+      context.current.restore();
 
       if (!update) {
         circles.current.push(circle);
       }
+    } catch (error) {
+      console.warn("Draw circle error:", error);
     }
-  };
+  }, [rgb, isMounted]);
 
-  const clearContext = () => {
-    if (context.current) {
+  const clearContext = useCallback(() => {
+    if (!context.current || !isMounted) return;
+
+    try {
       context.current.clearRect(
         0,
         0,
         canvasSize.current.w,
         canvasSize.current.h,
       );
+    } catch (error) {
+      console.warn("Clear context error:", error);
     }
-  };
+  }, [isMounted]);
 
-  const drawParticles = () => {
-    clearContext();
-    circles.current = [];
-    for (let i = 0; i < quantity; i++) {
-      const circle = circleParams();
-      drawCircle(circle);
+  const drawParticles = useCallback(() => {
+    if (!isMounted) return;
+    
+    try {
+      clearContext();
+      circles.current = [];
+      for (let i = 0; i < quantity; i++) {
+        const circle = circleParams();
+        drawCircle(circle);
+      }
+    } catch (error) {
+      console.warn("Draw particles error:", error);
     }
-  };
+  }, [quantity, clearContext, circleParams, drawCircle, isMounted]);
 
-  const remapValue = (
+  const remapValue = useCallback((
     value: number,
     start1: number,
     end1: number,
@@ -232,53 +283,67 @@ const Particles: React.FC<ParticlesProps> = ({
     const remapped =
       ((value - start1) * (end2 - start2)) / (end1 - start1) + start2;
     return remapped > 0 ? remapped : 0;
-  };
+  }, []);
 
-  const animate = () => {
-    clearContext();
-    circles.current.forEach((circle: Circle, i: number) => {
-      const edge = [
-        circle.x + circle.translateX - circle.size,
-        canvasSize.current.w - circle.x - circle.translateX - circle.size,
-        circle.y + circle.translateY - circle.size,
-        canvasSize.current.h - circle.y - circle.translateY - circle.size,
-      ];
-      const closestEdge = edge.reduce((a, b) => Math.min(a, b));
-      const remapClosestEdge = parseFloat(
-        remapValue(closestEdge, 0, 20, 0, 1).toFixed(2),
-      );
-      if (remapClosestEdge > 1) {
-        circle.alpha += 0.02;
-        if (circle.alpha > circle.targetAlpha) {
-          circle.alpha = circle.targetAlpha;
+  const animate = useCallback(() => {
+    if (!isMounted) return;
+
+    try {
+      clearContext();
+      circles.current.forEach((circle: Circle, i: number) => {
+        const edge = [
+          circle.x + circle.translateX - circle.size,
+          canvasSize.current.w - circle.x - circle.translateX - circle.size,
+          circle.y + circle.translateY - circle.size,
+          canvasSize.current.h - circle.y - circle.translateY - circle.size,
+        ];
+        const closestEdge = edge.reduce((a, b) => Math.min(a, b));
+        const remapClosestEdge = parseFloat(
+          remapValue(closestEdge, 0, 20, 0, 1).toFixed(2),
+        );
+        if (remapClosestEdge > 1) {
+          circle.alpha += 0.02;
+          if (circle.alpha > circle.targetAlpha) {
+            circle.alpha = circle.targetAlpha;
+          }
+        } else {
+          circle.alpha = circle.targetAlpha * remapClosestEdge;
         }
-      } else {
-        circle.alpha = circle.targetAlpha * remapClosestEdge;
-      }
-      circle.x += circle.dx + vx;
-      circle.y += circle.dy + vy;
-      circle.translateX +=
-        (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
-        ease;
-      circle.translateY +=
-        (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
-        ease;
+        circle.x += circle.dx + vx;
+        circle.y += circle.dy + vy;
+        circle.translateX +=
+          (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
+          ease;
+        circle.translateY +=
+          (mouse.current.y / (staticity / circle.magnetism) - circle.translateY) /
+          ease;
 
-      drawCircle(circle, true);
+        drawCircle(circle, true);
 
-      if (
-        circle.x < -circle.size ||
-        circle.x > canvasSize.current.w + circle.size ||
-        circle.y < -circle.size ||
-        circle.y > canvasSize.current.h + circle.size
-      ) {
-        circles.current.splice(i, 1);
-        const newCircle = circleParams();
-        drawCircle(newCircle);
+        if (
+          circle.x < -circle.size ||
+          circle.x > canvasSize.current.w + circle.size ||
+          circle.y < -circle.size ||
+          circle.y > canvasSize.current.h + circle.size
+        ) {
+          circles.current.splice(i, 1);
+          const newCircle = circleParams();
+          drawCircle(newCircle);
+        }
+      });
+
+      if (isMounted) {
+        animationFrameRef.current = requestAnimationFrame(animate);
       }
-    });
-    window.requestAnimationFrame(animate);
-  };
+    } catch (error) {
+      console.warn("Animation error:", error);
+    }
+  }, [clearContext, remapValue, vx, vy, staticity, ease, drawCircle, circleParams, isMounted]);
+
+  // Don't render on server
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div

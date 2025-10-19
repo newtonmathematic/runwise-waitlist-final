@@ -1,6 +1,6 @@
 import { render } from "@react-email/render";
 
-import WelcomeTemplate from "../../../emails";
+import RunwiseWaitlistEmail from "../../../emails";
 
 import { Resend } from "resend";
 import { NextRequest, NextResponse } from "next/server";
@@ -39,11 +39,11 @@ export async function POST(request: NextRequest, response: NextResponse) {
   const { email, firstname } = await request.json();
 
   const { data, error } = await resend.emails.send({
-    from: "Lakshay<hello@waitlist.lakshb.dev>",
+    from: "Runwise<hello@runwiseai.app>",
     to: [email],
-    subject: "Thankyou for wailisting the Next.js + Notion CMS template!",
-    reply_to: "lakshb.work@gmail.com",
-    html:  await render(WelcomeTemplate({ userFirstname: firstname })),
+    subject: "Welcome to Runwise! 🚀",
+    reply_to: "hello@runwiseai.app",
+    html:  await render(RunwiseWaitlistEmail({ userFirstname: firstname })),
   });
 
   // const { data, error } = { data: true, error: null }
