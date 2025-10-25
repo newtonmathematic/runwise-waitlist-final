@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Join the Runwise Waitlist",
     description: "AI-powered automation made effortless. Get early access and exclusive perks.",
-    images: ["https://runwiseai.app/twitter-image.png?v=4"],
+    images: ["https://runwiseai.app/twitter-image.png?v=5"],
   },
 };
 
