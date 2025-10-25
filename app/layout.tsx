@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     siteName: "Runwise",
     locale: "en_US",
     type: "website",
-    images: ["https://runwiseai.app/opengraph-image.png?v=3"],
+    images: ["https://runwiseai.app/opengraph-image.png?v=4"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Join the Runwise Waitlist",
     description: "AI-powered automation made effortless. Get early access and exclusive perks.",
-    images: ["https://runwiseai.app/twitter-image.png?v=3"],
+    images: ["https://runwiseai.app/twitter-image.png?v=4"],
   },
 };
 
