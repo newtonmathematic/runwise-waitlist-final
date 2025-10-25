@@ -22,13 +22,13 @@ export default function CTA() {
 
       <motion.img
         src="/logo.png"
-        alt="Runwise logo"
+        alt="Runwise AI Logo - AI-Powered Automation Platform"
         className="mx-auto h-12 w-12 my-4"
         variants={itemVariants}
       />
 
       <motion.div variants={itemVariants}>
-        <div className="text-center text-3xl font-medium tracking-tighter sm:text-5xl">
+        <h1 className="text-center text-3xl font-medium tracking-tighter sm:text-5xl">
           <TextBlur
             className="inline"
             text="AI-powered automation made "
@@ -40,15 +40,24 @@ export default function CTA() {
             className="inline"
             text="."
           />
-        </div>
+        </h1>
       </motion.div>
 
       <motion.div variants={itemVariants}>
-        <TextBlur
-          className="mx-auto max-w-[27rem] pt-1.5 text-center text-base text-zinc-300 sm:text-lg"
-          text="Join the Runwise waitlist to get early access and perks"
-          duration={0.8}
-        />
+        <h2 className="mx-auto max-w-[27rem] pt-1.5 text-center text-base text-zinc-300 sm:text-lg">
+          <TextBlur
+            className="mx-auto max-w-[27rem] pt-1.5 text-center text-base text-zinc-300 sm:text-lg"
+            text="Join the Runwise AI waitlist to get early access and exclusive perks for revolutionary AI automation tools"
+            duration={0.8}
+          />
+        </h2>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="mt-4">
+        <p className="mx-auto max-w-[30rem] text-center text-sm text-zinc-400">
+          Runwise AI is revolutionizing automation with intelligent AI-powered solutions. 
+          Be among the first to experience effortless automation that transforms how you work.
+        </p>
       </motion.div>
     </motion.div>
   );

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://runwiseai.app/sitemap.xml
+
+# Disallow admin pages from being indexed
+Disallow: /admin/
+
+# Allow all other content
+Allow: /
